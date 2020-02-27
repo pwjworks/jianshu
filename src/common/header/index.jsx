@@ -7,12 +7,42 @@ import {
   NavSearch,
   Addition,
   Button,
-  SearchWrapper
+  SearchInfo,
+  SearchWrapper,
+  SearchInfoTitle,
+  SearchInfoSwitch,
+  SearchInfoList,
+  SearchInfoItem
 } from './style'
 import { CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
+import { actionCreators } from './store'
 
-const Header=(props)=>{
+const getListArea=(show)=>{
+  if(show){
+    return (
+      <SearchInfo>
+        <SearchInfoTitle>
+          热门搜索
+          <SearchInfoSwitch>换一批</SearchInfoSwitch>
+        </SearchInfoTitle>
+        <SearchInfoList>
+          <SearchInfoItem>教育</SearchInfoItem>
+          <SearchInfoItem>教育</SearchInfoItem>
+          <SearchInfoItem>教育</SearchInfoItem>
+          <SearchInfoItem>教育</SearchInfoItem>
+          <SearchInfoItem>教育</SearchInfoItem>
+          <SearchInfoItem>教育</SearchInfoItem>
+          <SearchInfoItem>教育</SearchInfoItem>
+        </SearchInfoList>
+      </SearchInfo>
+    )
+  }else{
+    return null
+  }
+}
+
+const Header = (props) => {
   return (
     <HeaderWrapper>
       <Logo href='/' />
@@ -24,11 +54,7 @@ const Header=(props)=>{
           <i className='iconfont'>&#xe636;</i>
         </NavItem>
         <SearchWrapper>
-          <CSSTransition
-            timeout={200}
-            in={props.focused}
-            classNames='slide'
-          >
+          <CSSTransition timeout={200} in={props.focused} classNames='slide'>
             <NavSearch
               onFocus={props.handleInputFocus}
               onBlur={props.handleInputBlur}
@@ -38,6 +64,7 @@ const Header=(props)=>{
           <i className={props.focused ? 'focused iconfont' : 'iconfont'}>
             &#xe6dd;
           </i>
+          {getListArea(props.focused)}
         </SearchWrapper>
       </Nav>
       <Addition>
@@ -52,23 +79,17 @@ const Header=(props)=>{
 
 const mapStateToProps = (state) => {
   return {
-    focused: state.header.focused
+    focused: state.header.get('focused')
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     handleInputFocus() {
-      const action = {
-        type: 'search_focus'
-      }
-      dispatch(action)
+      dispatch(actionCreators.searchFocus())
     },
     handleInputBlur() {
-      const action = {
-        type: 'search_blur'
-      }
-      dispatch(action)
+      dispatch(actionCreators.searchBlur())
     }
   }
 }
