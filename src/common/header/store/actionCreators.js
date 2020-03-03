@@ -7,7 +7,7 @@ import {
 const changeList = (data) => ({
   type: actionTypes.CHANGE_LIST,
   data: fromJS(data.data),
-  totalPage: Math.ceil(data.length / 10)
+  totalPage: Math.ceil(data.data.length / 10)
 })
 
 export const searchFocus = () => ({
@@ -30,10 +30,15 @@ export const getList = () => {
   }
 }
 
-export const MouseEnter = () => ({
+export const mouseEnter = () => ({
   type: actionTypes.MOUSE_ENTER
 })
 
-export const MouseLeave = () => ({
+export const mouseLeave = () => ({
   type: actionTypes.MOUSE_LEAVE
+})
+
+export const changePage = (page) => ({
+  type: actionTypes.CHANGE_PAGE,
+  page
 })

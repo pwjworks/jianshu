@@ -16,7 +16,7 @@ import {
 } from './style'
 import { CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
-import { actionCreators, actionTypes } from './store'
+import { actionCreators } from './store'
 
 class Header extends Component {
   getListArea() {
@@ -24,17 +24,22 @@ class Header extends Component {
       focused,
       list,
       page,
+      totalPage,
       handleMouseEnter,
-      handleMouseLeave
+      handleMouseLeave,
+      mouseIn,
+      handleChangePage
     } = this.props
     const pageList = []
     const newList = list.toJS()
-    for (let i = (page - 1) * 10; i < page * 10; i++) {
-      pageList.push(
-        <SearchInfoItem key={newList[i]}>{newList[i]}</SearchInfoItem>
-      )
+    if (newList.length) {
+      for (let i = (page - 1) * 10; i < page * 10; i++) {
+        pageList.push(
+          <SearchInfoItem key={newList[i]}>{newList[i]}</SearchInfoItem>
+        )
+      }
     }
-    if (focused) {
+    if (focused || mouseIn) {
       return (
         <SearchInfo
           onMouseEnter={handleMouseEnter}
@@ -42,7 +47,21 @@ class Header extends Component {
         >
           <SearchInfoTitle>
             热门搜索
-            <SearchInfoSwitch>换一批</SearchInfoSwitch>
+            <SearchInfoSwitch
+              onClick={() => {
+                handleChangePage(page, totalPage, this.spinIcon)
+              }}
+            >
+              <i
+                ref={(icon) => {
+                  this.spinIcon = icon
+                }}
+                className='iconfont spin'
+              >
+                &#xe851;
+              </i>
+              换一批
+            </SearchInfoSwitch>
           </SearchInfoTitle>
           <SearchInfoList>{pageList}</SearchInfoList>
         </SearchInfo>
@@ -52,7 +71,7 @@ class Header extends Component {
     }
   }
   render() {
-    const { focused, handleInputFocus, handleInputBlur } = this.props
+    const { focused, handleInputFocus, handleInputBlur,list } = this.props
     return (
       <HeaderWrapper>
         <Logo href='/' />
@@ -66,12 +85,12 @@ class Header extends Component {
           <SearchWrapper>
             <CSSTransition timeout={200} in={focused} classNames='slide'>
               <NavSearch
-                onFocus={handleInputFocus}
+                onFocus={()=>{handleInputFocus(list)}}
                 onBlur={handleInputBlur}
                 className={focused ? 'focused' : ''}
               ></NavSearch>
             </CSSTransition>
-            <i className={focused ? 'focused iconfont' : 'iconfont'}>
+            <i className={focused ? 'focused iconfont zoom' : 'iconfont zoom'}>
               &#xe6dd;
             </i>
             {this.getListArea(focused)}
@@ -92,24 +111,40 @@ const mapStateToProps = (state) => {
   return {
     focused: state.header.get('focused'),
     list: state.header.get('list'),
-    page: state.header.get('page')
+    page: state.header.get('page'),
+    mouseIn: state.header.get('mouseIn'),
+    totalPage: state.header.get('totalPage')
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    handleInputFocus() {
-      dispatch(actionCreators.getList())
+    handleInputFocus(list) {
+      list.size === 0 && dispatch(actionCreators.getList())
       dispatch(actionCreators.searchFocus())
     },
     handleInputBlur() {
       dispatch(actionCreators.searchBlur())
     },
     handleMouseEnter() {
-      dispatch(actionCreators.MouseEnter())
+      dispatch(actionCreators.mouseEnter())
     },
     handleMouseLeave() {
-      dispatch(actionTypes.MouseLeave())
+      dispatch(actionCreators.mouseLeave())
+    },
+    handleChangePage(page, totalPage, spin) {
+      let originAngle = spin.style.transform.replace(/[^0-9]/gi, '')
+      if (originAngle) {
+        originAngle = parseInt(originAngle, 10)
+      } else {
+        originAngle = 0
+      }
+      spin.style.transform = 'rotate(360deg);'
+      if (page < totalPage) {
+        dispatch(actionCreators.changePage(page + 1))
+      } else {
+        dispatch(actionCreators.changePage(1))
+      }
     }
   }
 }
