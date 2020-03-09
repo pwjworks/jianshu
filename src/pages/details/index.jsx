@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
-
-class Details extends Component{
-  render(){
-    return(
-      <div>Details</div>
+import { DetailWrapper, Header,Content } from './style'
+class Details extends Component {
+  render() {
+    return (
+      <DetailWrapper>
+        <Header>有狐</Header>
+        <Content></Content>
+      </DetailWrapper>
     )
   }
 }

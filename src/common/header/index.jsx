@@ -17,6 +17,7 @@ import {
 import { CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 import { actionCreators } from './store'
+import { Link } from 'react-router-dom'
 
 class Header extends Component {
   getListArea() {
@@ -71,10 +72,12 @@ class Header extends Component {
     }
   }
   render() {
-    const { focused, handleInputFocus, handleInputBlur,list } = this.props
+    const { focused, handleInputFocus, handleInputBlur, list } = this.props
     return (
       <HeaderWrapper>
-        <Logo href='/' />
+        <Link to='/'>
+          <Logo />
+        </Link>
         <Nav>
           <NavItem className='left active'>首页</NavItem>
           <NavItem className='left'>下载app</NavItem>
@@ -85,7 +88,9 @@ class Header extends Component {
           <SearchWrapper>
             <CSSTransition timeout={200} in={focused} classNames='slide'>
               <NavSearch
-                onFocus={()=>{handleInputFocus(list)}}
+                onFocus={() => {
+                  handleInputFocus(list)
+                }}
                 onBlur={handleInputBlur}
                 className={focused ? 'focused' : ''}
               ></NavSearch>

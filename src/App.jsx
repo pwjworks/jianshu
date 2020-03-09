@@ -16,9 +16,9 @@ class App extends Component {
         <div id='root'>
           <IconGlobalStyle></IconGlobalStyle>
           <GlobalStyle></GlobalStyle>
-          <Header />
           <BrowserRouter>
             <div>
+              <Header />
               <Route path='/' exact component={Home}></Route>
               <Route path='/details' exact component={Details}></Route>
             </div>
